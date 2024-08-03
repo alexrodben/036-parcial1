@@ -1,4 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
+using System;
+using System.Collections.Generic;
 
 namespace Parcial1.Data
 {
@@ -11,34 +13,31 @@ namespace Parcial1.Data
         public int Year { get; set; }
         public string? Estado { get; set; }
 
-        public string GuardarVehiculo(Vehiculo Vehiculo)
+        public string GuardarVehiculo(Vehiculo vehiculo)
         {
             string qry = @"
-    INSERT INTO vehiculos (placa, marca, modelo, anio, color, tipo, estado)
-    VALUES (@placa, @marca, @modelo, @anio, @color, @tipo, @estado)";
+    INSERT INTO vehiculos (placa, marca, modelo, anio, estado)
+    VALUES (@placa, @marca, @modelo, @anio, @estado)";
 
             try
             {
-                //importante, cargar conector SQL
                 using SqlConnection conn = new(connectionString);
-                //abrir conexion
                 conn.Open();
                 using SqlCommand cmd = new(qry, conn);
-                cmd.Parameters.AddWithValue("@placa", Vehiculo.Placa);
-                cmd.Parameters.AddWithValue("@marca", Vehiculo.Marca);
-                cmd.Parameters.AddWithValue("@modelo", Vehiculo.Modelo);
-                cmd.Parameters.AddWithValue("@anio", Vehiculo.Year);
-                cmd.Parameters.AddWithValue("@estado", Vehiculo.Estado);
-                // Execute the command
+                cmd.Parameters.AddWithValue("@placa", vehiculo.Placa);
+                cmd.Parameters.AddWithValue("@marca", vehiculo.Marca);
+                cmd.Parameters.AddWithValue("@modelo", vehiculo.Modelo);
+                cmd.Parameters.AddWithValue("@anio", vehiculo.Year);
+                cmd.Parameters.AddWithValue("@estado", vehiculo.Estado);
                 cmd.ExecuteNonQuery();
-                return "";
+                return "Vehículo guardado exitosamente.";
             }
             catch (Exception ex)
             {
-                // Handle exception
-                return (ex.Message);
+                return ex.Message;
             }
         }
+
         public List<Vehiculo> ListarVehiculos()
         {
             List<Vehiculo> lista = new();
@@ -51,7 +50,7 @@ namespace Parcial1.Data
                 using SqlDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    Vehiculo Vehiculo = new()
+                    Vehiculo vehiculo = new()
                     {
                         Placa = reader["placa"].ToString() ?? "",
                         Marca = reader["marca"].ToString() ?? "",
@@ -59,7 +58,7 @@ namespace Parcial1.Data
                         Year = Convert.ToInt32(reader["anio"]),
                         Estado = reader["estado"].ToString() ?? ""
                     };
-                    lista.Add(Vehiculo);
+                    lista.Add(vehiculo);
                 }
             }
             catch (Exception ex)
@@ -69,5 +68,78 @@ namespace Parcial1.Data
             return lista;
         }
 
+        public Vehiculo? ObtenerVehiculo(string placa)
+        {
+            string query = "SELECT * FROM vehiculos WHERE placa = @placa";
+            try
+            {
+                using SqlConnection conn = new(connectionString);
+                conn.Open();
+                using SqlCommand cmd = new(query, conn);
+                cmd.Parameters.AddWithValue("@placa", placa);
+                using SqlDataReader reader = cmd.ExecuteReader();
+                if (reader.Read())
+                {
+                    Vehiculo vehiculo = new()
+                    {
+                        Placa = reader["placa"].ToString() ?? "",
+                        Marca = reader["marca"].ToString() ?? "",
+                        Modelo = reader["modelo"].ToString() ?? "",
+                        Year = Convert.ToInt32(reader["anio"]),
+                        Estado = reader["estado"].ToString() ?? ""
+                    };
+                    return vehiculo;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return null;
+        }
+
+        public string ActualizarVehiculo(Vehiculo vehiculo)
+        {
+            string qry = @"
+    UPDATE vehiculos 
+    SET marca = @marca, modelo = @modelo, anio = @anio, estado = @estado
+    WHERE placa = @placa";
+
+            try
+            {
+                using SqlConnection conn = new(connectionString);
+                conn.Open();
+                using SqlCommand cmd = new(qry, conn);
+                cmd.Parameters.AddWithValue("@placa", vehiculo.Placa);
+                cmd.Parameters.AddWithValue("@marca", vehiculo.Marca);
+                cmd.Parameters.AddWithValue("@modelo", vehiculo.Modelo);
+                cmd.Parameters.AddWithValue("@anio", vehiculo.Year);
+                cmd.Parameters.AddWithValue("@estado", vehiculo.Estado);
+                cmd.ExecuteNonQuery();
+                return "Vehículo actualizado exitosamente.";
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
+
+        public string EliminarVehiculo(string placa)
+        {
+            string qry = "DELETE FROM vehiculos WHERE placa = @placa";
+            try
+            {
+                using SqlConnection conn = new(connectionString);
+                conn.Open();
+                using SqlCommand cmd = new(qry, conn);
+                cmd.Parameters.AddWithValue("@placa", placa);
+                cmd.ExecuteNonQuery();
+                return "Vehículo eliminado exitosamente.";
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
     }
 }

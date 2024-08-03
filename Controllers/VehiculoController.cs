@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Parcial1.Data;
+using System.Collections.Generic;
 
 namespace Parcial1.Controllers
 {
@@ -9,26 +11,74 @@ namespace Parcial1.Controllers
     {
         [HttpPost]
         [Route("")]
-        public ActionResult<object> Guardar([FromBody] Data.Vehiculo Vehiculo)
+        public ActionResult<object> Guardar([FromBody] Vehiculo vehiculo)
         {
-            string respuesta = Vehiculo.GuardarVehiculo(Vehiculo);
+            Vehiculo vehiculoData = new();
+            string respuesta = vehiculoData.GuardarVehiculo(vehiculo);
             if (respuesta == "")
             {
-                return Ok(new { cod_error = 0, msg = "Vehiculo guardado satisfactoriamente" });
+                return Ok(new { cod_error = 0, msg = "Vehículo guardado satisfactoriamente" });
             }
             else
             {
-                return BadRequest(new { cod_error = -1000, msg = respuesta }); ;
+                return BadRequest(new { cod_error = -1000, msg = respuesta });
             }
-
         }
+
         [HttpGet]
         [Route("")]
-        public ActionResult<object> listar()
+        public ActionResult<object> Listar()
         {
-            Data.Vehiculo Vehiculos = new();
-            return Ok(Vehiculos.ListarVehiculos());
+            Vehiculo vehiculoData = new();
+            return Ok(vehiculoData.ListarVehiculos());
         }
 
+        [HttpGet]
+        [Route("{placa}")]
+        public ActionResult<object> Obtener(string placa)
+        {
+            Vehiculo vehiculoData = new();
+            Vehiculo? vehiculo = vehiculoData.ObtenerVehiculo(placa);
+            if (vehiculo != null)
+            {
+                return Ok(vehiculo);
+            }
+            else
+            {
+                return NotFound(new { cod_error = -1001, msg = "Vehículo no encontrado" });
+            }
+        }
+
+        [HttpPut]
+        [Route("")]
+        public ActionResult<object> Actualizar([FromBody] Vehiculo vehiculo)
+        {
+            Vehiculo vehiculoData = new();
+            string respuesta = vehiculoData.ActualizarVehiculo(vehiculo);
+            if (respuesta == "Vehículo actualizado exitosamente.")
+            {
+                return Ok(new { cod_error = 0, msg = respuesta });
+            }
+            else
+            {
+                return BadRequest(new { cod_error = -1002, msg = respuesta });
+            }
+        }
+
+        [HttpDelete]
+        [Route("{placa}")]
+        public ActionResult<object> Eliminar(string placa)
+        {
+            Vehiculo vehiculoData = new();
+            string respuesta = vehiculoData.EliminarVehiculo(placa);
+            if (respuesta == "Vehículo eliminado exitosamente.")
+            {
+                return Ok(new { cod_error = 0, msg = respuesta });
+            }
+            else
+            {
+                return BadRequest(new { cod_error = -1003, msg = respuesta });
+            }
+        }
     }
 }
