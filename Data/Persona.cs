@@ -1,4 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
+using System;
+using System.Collections.Generic;
 
 namespace Parcial1.Data
 {
@@ -6,44 +8,41 @@ namespace Parcial1.Data
     {
         private readonly string connectionString = "Server=svr-sql-ctezo.southcentralus.cloudapp.azure.com;Database=db_banco;User Id=usr_admin;Password=usrGuastaUMG!ng;TrustServerCertificate=True;";
 
-        public string? Cui { get; set; }
+        public string? CUI { get; set; }
         public string? Nombre { get; set; }
         public string? Apellido { get; set; }
         public string? Telefono { get; set; }
         public string? Direccion { get; set; }
 
-        public string GuardarPersona(Persona Persona)
+        public string GuardarPersona(Persona persona)
         {
             string qry = @"
-                INSERT INTO vehiculos (cui, nombre, apellido, telefono, direccion)
-                VALUES (@cui, @nombre, @apellido, @telefono, @direccion)";
+                INSERT INTO personas (CUI, nombre, apellido, telefono, direccion)
+                VALUES (@CUI, @nombre, @apellido, @telefono, @direccion)";
 
             try
             {
-                //importante, cargar conector SQL
                 using SqlConnection conn = new(connectionString);
-                //abrir conexion
                 conn.Open();
                 using SqlCommand cmd = new(qry, conn);
-                cmd.Parameters.AddWithValue("@cui", Persona.Cui);
-                cmd.Parameters.AddWithValue("@nombre", Persona.Nombre);
-                cmd.Parameters.AddWithValue("@apellido", Persona.Apellido);
-                cmd.Parameters.AddWithValue("@anio", Persona.Telefono);
-                cmd.Parameters.AddWithValue("@direccion", Persona.Direccion);
+                cmd.Parameters.AddWithValue("@CUI", persona.CUI);
+                cmd.Parameters.AddWithValue("@nombre", persona.Nombre);
+                cmd.Parameters.AddWithValue("@apellido", persona.Apellido);
+                cmd.Parameters.AddWithValue("@telefono", persona.Telefono);
+                cmd.Parameters.AddWithValue("@direccion", persona.Direccion);
 
-                // Execute the command
                 cmd.ExecuteNonQuery();
-                return "";
+                return "Persona guardada exitosamente.";
             }
             catch (Exception ex)
             {
-                // Handle exception
-                return (ex.Message);
+                return ex.Message;
             }
         }
+
         public List<Persona> ListarPersonas()
         {
-            List<Persona> lista = [];
+            List<Persona> lista = new();
             string query = "SELECT * FROM personas";
             try
             {
@@ -55,11 +54,11 @@ namespace Parcial1.Data
                 {
                     Persona persona = new()
                     {
-                        Cui = reader["cui"].ToString() ?? "",
-                        Nombre = reader["nombre"].ToString() ?? "",
-                        Apellido = reader["apellido"].ToString() ?? "",
-                        Telefono = reader["anio"].ToString() ?? "",
-                        Direccion = reader["direccion"].ToString() ?? ""
+                        CUI = reader["CUI"].ToString(),
+                        Nombre = reader["nombre"].ToString(),
+                        Apellido = reader["apellido"].ToString(),
+                        Telefono = reader["telefono"].ToString(),
+                        Direccion = reader["direccion"].ToString()
                     };
                     lista.Add(persona);
                 }
@@ -71,5 +70,78 @@ namespace Parcial1.Data
             return lista;
         }
 
+        public Persona? ObtenerPersona(string cui)
+        {
+            string query = "SELECT * FROM personas WHERE CUI = @CUI";
+            try
+            {
+                using SqlConnection conn = new(connectionString);
+                conn.Open();
+                using SqlCommand cmd = new(query, conn);
+                cmd.Parameters.AddWithValue("@CUI", cui);
+                using SqlDataReader reader = cmd.ExecuteReader();
+                if (reader.Read())
+                {
+                    Persona persona = new()
+                    {
+                        CUI = reader["CUI"].ToString(),
+                        Nombre = reader["nombre"].ToString(),
+                        Apellido = reader["apellido"].ToString(),
+                        Telefono = reader["telefono"].ToString(),
+                        Direccion = reader["direccion"].ToString()
+                    };
+                    return persona;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return null;
+        }
+
+        public string ActualizarPersona(Persona persona)
+        {
+            string qry = @"
+                UPDATE personas 
+                SET nombre = @nombre, apellido = @apellido, telefono = @telefono, direccion = @direccion
+                WHERE CUI = @CUI";
+
+            try
+            {
+                using SqlConnection conn = new(connectionString);
+                conn.Open();
+                using SqlCommand cmd = new(qry, conn);
+                cmd.Parameters.AddWithValue("@CUI", persona.CUI);
+                cmd.Parameters.AddWithValue("@nombre", persona.Nombre);
+                cmd.Parameters.AddWithValue("@apellido", persona.Apellido);
+                cmd.Parameters.AddWithValue("@telefono", persona.Telefono);
+                cmd.Parameters.AddWithValue("@direccion", persona.Direccion);
+                cmd.ExecuteNonQuery();
+                return "Persona actualizada exitosamente.";
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
+
+        public string EliminarPersona(string cui)
+        {
+            string qry = "DELETE FROM personas WHERE CUI = @CUI";
+            try
+            {
+                using SqlConnection conn = new(connectionString);
+                conn.Open();
+                using SqlCommand cmd = new(qry, conn);
+                cmd.Parameters.AddWithValue("@CUI", cui);
+                cmd.ExecuteNonQuery();
+                return "Persona eliminada exitosamente.";
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
     }
 }
