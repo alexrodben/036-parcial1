@@ -1,15 +1,15 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Webappi1.Controllers
+namespace Parcial1.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class CompraVentaController : ControllerBase
     {
         [HttpPost]
-        [Route("guardar")]
-        public ActionResult<object> guardar([FromBody] Reposo.CompraVenta CompraVenta)
+        [Route("")]
+        public ActionResult<object> Guardar([FromBody] Data.CompraVenta CompraVenta)
         {
             string respuesta = CompraVenta.GuardarCompraVenta(CompraVenta);
             if (respuesta == "")
@@ -23,10 +23,10 @@ namespace Webappi1.Controllers
 
         }
         [HttpGet]
-        [Route("listar")]
-        public ActionResult<object> listar()
+        [Route("")]
+        public ActionResult<object> Listar()
         {
-            Reposo.CompraVenta CompraVentas = new Reposo.CompraVenta();
+            Data.CompraVenta CompraVentas = new Data.CompraVenta();
             return Ok(CompraVentas.ListarCompraVentas());
         }
 

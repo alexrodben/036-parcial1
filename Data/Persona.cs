@@ -1,6 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 
-namespace Webappi1.Reposo
+namespace Parcial1.Data
 {
     public class Persona
     {
@@ -8,7 +8,7 @@ namespace Webappi1.Reposo
 
         public string cui { get; set; }
         public string nombre { get; set; }
-        public string apellido { get; set; }   
+        public string apellido { get; set; }
         public string telefono { get; set; }
         public string direccion { get; set; }
 
@@ -21,23 +21,19 @@ namespace Webappi1.Reposo
             try
             {
                 //importante, cargar conector SQL
-                using (SqlConnection conn = new SqlConnection(connectionString))
-                {
-                    //abrir conexion
-                    conn.Open();
-                    using (SqlCommand cmd = new SqlCommand(qry, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@cui", Persona.cui);
-                        cmd.Parameters.AddWithValue("@nombre", Persona.nombre);
-                        cmd.Parameters.AddWithValue("@apellido", Persona.apellido);
-                        cmd.Parameters.AddWithValue("@anio", Persona.telefono);
-                        cmd.Parameters.AddWithValue("@direccion", Persona.direccion);
+                using SqlConnection conn = new SqlConnection(connectionString);
+                //abrir conexion
+                conn.Open();
+                using SqlCommand cmd = new SqlCommand(qry, conn);
+                cmd.Parameters.AddWithValue("@cui", Persona.cui);
+                cmd.Parameters.AddWithValue("@nombre", Persona.nombre);
+                cmd.Parameters.AddWithValue("@apellido", Persona.apellido);
+                cmd.Parameters.AddWithValue("@anio", Persona.telefono);
+                cmd.Parameters.AddWithValue("@direccion", Persona.direccion);
 
-                        // Execute the command
-                        cmd.ExecuteNonQuery();
-                    }
-                    return "";
-                }
+                // Execute the command
+                cmd.ExecuteNonQuery();
+                return "";
             }
             catch (Exception ex)
             {
@@ -51,25 +47,19 @@ namespace Webappi1.Reposo
             string query = "SELECT * FROM personas";
             try
             {
-                using (SqlConnection conn = new SqlConnection(connectionString))
+                using SqlConnection conn = new SqlConnection(connectionString);
+                conn.Open();
+                using SqlCommand cmd = new SqlCommand(query, conn);
+                using SqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
                 {
-                    conn.Open();
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
-                    {
-                        using (SqlDataReader reader = cmd.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                Persona persona = new Persona();
-                                persona.cui = reader["cui"].ToString();
-                                persona.nombre = reader["nombre"].ToString();
-                                persona.apellido = reader["apellido"].ToString();
-                                persona.telefono = reader["anio"].ToString();
-                                persona.direccion = reader["direccion"].ToString();
-                                lista.Add(persona);
-                            }
-                        }
-                    }
+                    Persona persona = new Persona();
+                    persona.cui = reader["cui"].ToString() ?? "";
+                    persona.nombre = reader["nombre"].ToString() ?? "";
+                    persona.apellido = reader["apellido"].ToString() ?? "";
+                    persona.telefono = reader["anio"].ToString() ?? "";
+                    persona.direccion = reader["direccion"].ToString() ?? "";
+                    lista.Add(persona);
                 }
             }
             catch (Exception ex)

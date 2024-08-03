@@ -1,17 +1,17 @@
 ﻿using Microsoft.Data.SqlClient;
 
-namespace Webappi1.Reposo
+namespace Parcial1.Data
 {
     public class CompraVenta
     {
         private string connectionString = "Server=svr-sql-ctezo.southcentralus.cloudapp.azure.com;Database=db_banco;User Id=usr_admin;Password=usrGuastaUMG!ng;TrustServerCertificate=True;";
 
-        public string idCompraVenta { get; set; }
-        public string placa { get; set; }
-        public string cuiComprador { get; set; }   
-        public string cuiVendedor { get; set; }
-        public string fechaTransaccion { get; set; }
-        public string perecioVenta { get; set; }
+        public string IdCompraVenta { get; set; }
+        public string Placa { get; set; }
+        public string CuiComprador { get; set; }
+        public string CuiVendedor { get; set; }
+        public string FechaTransaccion { get; set; }
+        public string PerecioVenta { get; set; }
 
         public string GuardarCompraVenta(CompraVenta CompraVenta)
         {
@@ -22,23 +22,18 @@ namespace Webappi1.Reposo
             try
             {
                 //importante, cargar conector SQL
-                using (SqlConnection conn = new SqlConnection(connectionString))
-                {
-                    //abrir conexion
-                    conn.Open();
-                    using (SqlCommand cmd = new SqlCommand(qry, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@idCompraVenta", CompraVenta.idCompraVenta);
-                        cmd.Parameters.AddWithValue("@placa", CompraVenta.placa);
-                        cmd.Parameters.AddWithValue("@cuiComprador", CompraVenta.cuiComprador);
-                        cmd.Parameters.AddWithValue("@anio", CompraVenta.cuiVendedor);
-                        cmd.Parameters.AddWithValue("@fechaTransaccion", CompraVenta.fechaTransaccion);
-
-                        // Execute the command
-                        cmd.ExecuteNonQuery();
-                    }
-                    return "";
-                }
+                using SqlConnection conn = new(connectionString);
+                //abrir conexion
+                conn.Open();
+                using SqlCommand cmd = new(qry, conn);
+                cmd.Parameters.AddWithValue("@idCompraVenta", CompraVenta.IdCompraVenta);
+                cmd.Parameters.AddWithValue("@placa", CompraVenta.Placa);
+                cmd.Parameters.AddWithValue("@cuiComprador", CompraVenta.CuiComprador);
+                cmd.Parameters.AddWithValue("@anio", CompraVenta.CuiVendedor);
+                cmd.Parameters.AddWithValue("@fechaTransaccion", CompraVenta.FechaTransaccion);
+                // Execute the command
+                cmd.ExecuteNonQuery();
+                return "";
             }
             catch (Exception ex)
             {
@@ -52,26 +47,20 @@ namespace Webappi1.Reposo
             string query = "SELECT * FROM compraVentas";
             try
             {
-                using (SqlConnection conn = new SqlConnection(connectionString))
+                using SqlConnection conn = new SqlConnection(connectionString);
+                conn.Open();
+                using SqlCommand cmd = new SqlCommand(query, conn);
+                using SqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
                 {
-                    conn.Open();
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
-                    {
-                        using (SqlDataReader reader = cmd.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                CompraVenta compraVenta = new CompraVenta();
-                                compraVenta.idCompraVenta = reader["idCompraVenta"].ToString();
-                                compraVenta.placa = reader["placa"].ToString();
-                                compraVenta.cuiComprador = reader["cuiComprador"].ToString();
-                                compraVenta.cuiVendedor = reader["anio"].ToString();
-                                compraVenta.fechaTransaccion = reader["fechaTransaccion"].ToString();
-                                compraVenta.perecioVenta = reader["perecioVenta"].ToString();
-                                lista.Add(compraVenta);
-                            }
-                        }
-                    }
+                    CompraVenta compraVenta = new CompraVenta();
+                    compraVenta.IdCompraVenta = reader["idCompraVenta"].ToString();
+                    compraVenta.Placa = reader["placa"].ToString();
+                    compraVenta.CuiComprador = reader["cuiComprador"].ToString();
+                    compraVenta.CuiVendedor = reader["anio"].ToString();
+                    compraVenta.FechaTransaccion = reader["fechaTransaccion"].ToString();
+                    compraVenta.PerecioVenta = reader["perecioVenta"].ToString();
+                    lista.Add(compraVenta);
                 }
             }
             catch (Exception ex)

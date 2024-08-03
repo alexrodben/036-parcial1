@@ -1,16 +1,15 @@
 ﻿using Microsoft.Data.SqlClient;
 
-namespace Webappi1.Reposo
+namespace Parcial1.Data
 {
     public class Vehiculo
     {
         private string connectionString = "Server=svr-sql-ctezo.southcentralus.cloudapp.azure.com;Database=db_banco;User Id=usr_admin;Password=usrGuastaUMG!ng;TrustServerCertificate=True;";
-
-        public string placa { get; set; }
-        public string marca { get; set; }
-        public string modelo { get; set; }
+        public string? Placa { get; set; }
+        public string? marca { get; set; }
+        public string? modelo { get; set; }
         public int year { get; set; }
-        public string estado { get; set; }
+        public string? estado { get; set; }
 
         public string GuardarVehiculo(Vehiculo Vehiculo)
         {
@@ -21,23 +20,18 @@ namespace Webappi1.Reposo
             try
             {
                 //importante, cargar conector SQL
-                using (SqlConnection conn = new SqlConnection(connectionString))
-                {
-                    //abrir conexion
-                    conn.Open();
-                    using (SqlCommand cmd = new SqlCommand(qry, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@placa", Vehiculo.placa);
-                        cmd.Parameters.AddWithValue("@marca", Vehiculo.marca);
-                        cmd.Parameters.AddWithValue("@modelo", Vehiculo.modelo);
-                        cmd.Parameters.AddWithValue("@anio", Vehiculo.year);
-                        cmd.Parameters.AddWithValue("@estado", Vehiculo.estado);
-
-                        // Execute the command
-                        cmd.ExecuteNonQuery();
-                    }
-                    return "";
-                }
+                using SqlConnection conn = new(connectionString);
+                //abrir conexion
+                conn.Open();
+                using SqlCommand cmd = new(qry, conn);
+                cmd.Parameters.AddWithValue("@placa", Vehiculo.Placa);
+                cmd.Parameters.AddWithValue("@marca", Vehiculo.marca);
+                cmd.Parameters.AddWithValue("@modelo", Vehiculo.modelo);
+                cmd.Parameters.AddWithValue("@anio", Vehiculo.year);
+                cmd.Parameters.AddWithValue("@estado", Vehiculo.estado);
+                // Execute the command
+                cmd.ExecuteNonQuery();
+                return "";
             }
             catch (Exception ex)
             {
@@ -51,25 +45,21 @@ namespace Webappi1.Reposo
             string query = "SELECT * FROM vehiculos";
             try
             {
-                using (SqlConnection conn = new SqlConnection(connectionString))
+                using SqlConnection conn = new SqlConnection(connectionString);
+                conn.Open();
+                using SqlCommand cmd = new SqlCommand(query, conn);
+                using SqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
                 {
-                    conn.Open();
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    Vehiculo Vehiculo = new()
                     {
-                        using (SqlDataReader reader = cmd.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                Vehiculo Vehiculo = new Vehiculo();
-                                Vehiculo.placa = reader["placa"].ToString();
-                                Vehiculo.marca = reader["marca"].ToString();
-                                Vehiculo.modelo = reader["modelo"].ToString();
-                                Vehiculo.year = Convert.ToInt32(reader["anio"]);
-                                Vehiculo.estado = reader["estado"].ToString();
-                                lista.Add(Vehiculo);
-                            }
-                        }
-                    }
+                        Placa = reader["placa"].ToString() ?? "",
+                        marca = reader["marca"].ToString() ?? "",
+                        modelo = reader["modelo"].ToString() ?? "",
+                        year = Convert.ToInt32(reader["anio"]),
+                        estado = reader["estado"].ToString() ?? ""
+                    };
+                    lista.Add(Vehiculo);
                 }
             }
             catch (Exception ex)
