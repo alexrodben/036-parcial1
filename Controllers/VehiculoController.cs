@@ -5,13 +5,13 @@ namespace Webappi1.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AutoController : ControllerBase
+    public class VehiculoController : ControllerBase
     {
         [HttpPost]
         [Route("guardar")]
-        public ActionResult<object> guardar([FromBody] Reposo.Auto Auto)
+        public ActionResult<object> guardar([FromBody] Reposo.Vehiculo Vehiculo)
         {
-            string respuesta = Auto.GuardarAuto(Auto);
+            string respuesta = Vehiculo.GuardarVehiculo(Vehiculo);
             if (respuesta == "")
             {
                 return Ok(new { cod_error = 0, msg = "Vehículo guardado satisfactoriamente" });
@@ -26,8 +26,8 @@ namespace Webappi1.Controllers
         [Route("listar")]
         public ActionResult<object> listar()
         {
-            Reposo.Auto Autos = new Reposo.Auto();
-            return Ok(Autos.ListarVehiculos());
+            Reposo.Vehiculo Vehiculos = new Reposo.Vehiculo();
+            return Ok(Vehiculos.ListarVehiculos());
         }
 
     }

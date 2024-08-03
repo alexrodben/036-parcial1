@@ -2,7 +2,7 @@
 
 namespace Webappi1.Reposo
 {
-    public class Auto
+    public class Vehiculo
     {
         private string connectionString = "Server=svr-sql-ctezo.southcentralus.cloudapp.azure.com;Database=db_banco;User Id=usr_admin;Password=usrGuastaUMG!ng;TrustServerCertificate=True;";
 
@@ -10,12 +10,9 @@ namespace Webappi1.Reposo
         public string marca { get; set; }
         public string modelo { get; set; }
         public int year { get; set; }
-        public string color { get; set; }
-        public string tipo { get; set; }
-
         public string estado { get; set; }
 
-        public string GuardarAuto(Auto Auto)
+        public string GuardarVehiculo(Vehiculo Vehiculo)
         {
             string qry = @"
     INSERT INTO vehiculos (placa, marca, modelo, anio, color, tipo, estado)
@@ -30,13 +27,11 @@ namespace Webappi1.Reposo
                     conn.Open();
                     using (SqlCommand cmd = new SqlCommand(qry, conn))
                     {
-                        cmd.Parameters.AddWithValue("@placa", Auto.placa);
-                        cmd.Parameters.AddWithValue("@marca", Auto.marca);
-                        cmd.Parameters.AddWithValue("@modelo", Auto.modelo);
-                        cmd.Parameters.AddWithValue("@anio", Auto.year);
-                        cmd.Parameters.AddWithValue("@color", Auto.color);
-                        cmd.Parameters.AddWithValue("@tipo", Auto.tipo);
-                        cmd.Parameters.AddWithValue("@estado", Auto.estado);
+                        cmd.Parameters.AddWithValue("@placa", Vehiculo.placa);
+                        cmd.Parameters.AddWithValue("@marca", Vehiculo.marca);
+                        cmd.Parameters.AddWithValue("@modelo", Vehiculo.modelo);
+                        cmd.Parameters.AddWithValue("@anio", Vehiculo.year);
+                        cmd.Parameters.AddWithValue("@estado", Vehiculo.estado);
 
                         // Execute the command
                         cmd.ExecuteNonQuery();
@@ -50,9 +45,9 @@ namespace Webappi1.Reposo
                 return (ex.Message);
             }
         }
-        public List<Auto> ListarVehiculos()
+        public List<Vehiculo> ListarVehiculos()
         {
-            List<Auto> lista = new List<Auto>();
+            List<Vehiculo> lista = new List<Vehiculo>();
             string query = "SELECT * FROM vehiculos";
             try
             {
@@ -65,15 +60,13 @@ namespace Webappi1.Reposo
                         {
                             while (reader.Read())
                             {
-                                Auto Auto = new Auto();
-                                Auto.placa = reader["placa"].ToString();
-                                Auto.marca = reader["marca"].ToString();
-                                Auto.modelo = reader["modelo"].ToString();
-                                Auto.year = Convert.ToInt32(reader["anio"]);
-                                Auto.color = reader["color"].ToString();
-                                Auto.tipo = reader["tipo"].ToString();
-                                Auto.estado = reader["estado"].ToString();
-                                lista.Add(Auto);
+                                Vehiculo Vehiculo = new Vehiculo();
+                                Vehiculo.placa = reader["placa"].ToString();
+                                Vehiculo.marca = reader["marca"].ToString();
+                                Vehiculo.modelo = reader["modelo"].ToString();
+                                Vehiculo.year = Convert.ToInt32(reader["anio"]);
+                                Vehiculo.estado = reader["estado"].ToString();
+                                lista.Add(Vehiculo);
                             }
                         }
                     }
