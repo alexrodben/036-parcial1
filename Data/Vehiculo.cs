@@ -4,12 +4,12 @@ namespace Parcial1.Data
 {
     public class Vehiculo
     {
-        private string connectionString = "Server=svr-sql-ctezo.southcentralus.cloudapp.azure.com;Database=db_banco;User Id=usr_admin;Password=usrGuastaUMG!ng;TrustServerCertificate=True;";
+        private readonly string connectionString = "Server=svr-sql-ctezo.southcentralus.cloudapp.azure.com;Database=db_banco;User Id=usr_admin;Password=usrGuastaUMG!ng;TrustServerCertificate=True;";
         public string? Placa { get; set; }
-        public string? marca { get; set; }
-        public string? modelo { get; set; }
-        public int year { get; set; }
-        public string? estado { get; set; }
+        public string? Marca { get; set; }
+        public string? Modelo { get; set; }
+        public int Year { get; set; }
+        public string? Estado { get; set; }
 
         public string GuardarVehiculo(Vehiculo Vehiculo)
         {
@@ -25,10 +25,10 @@ namespace Parcial1.Data
                 conn.Open();
                 using SqlCommand cmd = new(qry, conn);
                 cmd.Parameters.AddWithValue("@placa", Vehiculo.Placa);
-                cmd.Parameters.AddWithValue("@marca", Vehiculo.marca);
-                cmd.Parameters.AddWithValue("@modelo", Vehiculo.modelo);
-                cmd.Parameters.AddWithValue("@anio", Vehiculo.year);
-                cmd.Parameters.AddWithValue("@estado", Vehiculo.estado);
+                cmd.Parameters.AddWithValue("@marca", Vehiculo.Marca);
+                cmd.Parameters.AddWithValue("@modelo", Vehiculo.Modelo);
+                cmd.Parameters.AddWithValue("@anio", Vehiculo.Year);
+                cmd.Parameters.AddWithValue("@estado", Vehiculo.Estado);
                 // Execute the command
                 cmd.ExecuteNonQuery();
                 return "";
@@ -41,23 +41,23 @@ namespace Parcial1.Data
         }
         public List<Vehiculo> ListarVehiculos()
         {
-            List<Vehiculo> lista = new List<Vehiculo>();
+            List<Vehiculo> lista = new();
             string query = "SELECT * FROM vehiculos";
             try
             {
-                using SqlConnection conn = new SqlConnection(connectionString);
+                using SqlConnection conn = new(connectionString);
                 conn.Open();
-                using SqlCommand cmd = new SqlCommand(query, conn);
+                using SqlCommand cmd = new(query, conn);
                 using SqlDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
                     Vehiculo Vehiculo = new()
                     {
                         Placa = reader["placa"].ToString() ?? "",
-                        marca = reader["marca"].ToString() ?? "",
-                        modelo = reader["modelo"].ToString() ?? "",
-                        year = Convert.ToInt32(reader["anio"]),
-                        estado = reader["estado"].ToString() ?? ""
+                        Marca = reader["marca"].ToString() ?? "",
+                        Modelo = reader["modelo"].ToString() ?? "",
+                        Year = Convert.ToInt32(reader["anio"]),
+                        Estado = reader["estado"].ToString() ?? ""
                     };
                     lista.Add(Vehiculo);
                 }

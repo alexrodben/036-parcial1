@@ -26,7 +26,7 @@ namespace Parcial1.Controllers
         [Route("")]
         public ActionResult<object> Listar()
         {
-            Data.CompraVenta CompraVentas = new Data.CompraVenta();
+            Data.CompraVenta CompraVentas = new();
             return Ok(CompraVentas.ListarCompraVentas());
         }
 

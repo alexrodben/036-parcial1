@@ -6,12 +6,12 @@ namespace Parcial1.Data
     {
         private string connectionString = "Server=svr-sql-ctezo.southcentralus.cloudapp.azure.com;Database=db_banco;User Id=usr_admin;Password=usrGuastaUMG!ng;TrustServerCertificate=True;";
 
-        public string IdCompraVenta { get; set; }
-        public string Placa { get; set; }
-        public string CuiComprador { get; set; }
-        public string CuiVendedor { get; set; }
-        public string FechaTransaccion { get; set; }
-        public string PerecioVenta { get; set; }
+        public string? IdCompraVenta { get; set; }
+        public string? Placa { get; set; }
+        public string? CuiComprador { get; set; }
+        public string? CuiVendedor { get; set; }
+        public string? FechaTransaccion { get; set; }
+        public string? PerecioVenta { get; set; }
 
         public string GuardarCompraVenta(CompraVenta CompraVenta)
         {
@@ -43,23 +43,25 @@ namespace Parcial1.Data
         }
         public List<CompraVenta> ListarCompraVentas()
         {
-            List<CompraVenta> lista = new List<CompraVenta>();
+            List<CompraVenta> lista = new();
             string query = "SELECT * FROM compraVentas";
             try
             {
-                using SqlConnection conn = new SqlConnection(connectionString);
+                using SqlConnection conn = new(connectionString);
                 conn.Open();
-                using SqlCommand cmd = new SqlCommand(query, conn);
+                using SqlCommand cmd = new(query, conn);
                 using SqlDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    CompraVenta compraVenta = new CompraVenta();
-                    compraVenta.IdCompraVenta = reader["idCompraVenta"].ToString();
-                    compraVenta.Placa = reader["placa"].ToString();
-                    compraVenta.CuiComprador = reader["cuiComprador"].ToString();
-                    compraVenta.CuiVendedor = reader["anio"].ToString();
-                    compraVenta.FechaTransaccion = reader["fechaTransaccion"].ToString();
-                    compraVenta.PerecioVenta = reader["perecioVenta"].ToString();
+                    CompraVenta compraVenta = new()
+                    {
+                        IdCompraVenta = reader["idCompraVenta"].ToString(),
+                        Placa = reader["placa"].ToString(),
+                        CuiComprador = reader["cuiComprador"].ToString(),
+                        CuiVendedor = reader["anio"].ToString(),
+                        FechaTransaccion = reader["fechaTransaccion"].ToString(),
+                        PerecioVenta = reader["perecioVenta"].ToString()
+                    };
                     lista.Add(compraVenta);
                 }
             }
