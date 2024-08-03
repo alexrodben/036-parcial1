@@ -43,7 +43,7 @@ namespace Parcial1.Data
         }
         public List<Persona> ListarPersonas()
         {
-            List<Persona> lista = new();
+            List<Persona> lista = [];
             string query = "SELECT * FROM personas";
             try
             {

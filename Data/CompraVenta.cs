@@ -16,7 +16,7 @@ namespace Parcial1.Data
         public string GuardarCompraVenta(CompraVenta compraVenta)
         {
             string qry = @"
-                INSERT INTO compraVenta (idCompraVenta, placa, cuiComprador, cuiVendedor, fechaTransaccion, perecioVenta)
+                INSERT INTO CompraVenta (idCompraVenta, placa, cuiComprador, cuiVendedor, fechaTransaccion, perecioVenta)
                 VALUES (@idCompraVenta, @placa, @cuiComprador, @cuiVendedor, @fechaTransaccion, @perecioVenta)";
 
             try
@@ -41,8 +41,8 @@ namespace Parcial1.Data
 
         public List<CompraVenta> ListarcompraVenta()
         {
-            List<CompraVenta> lista = new();
-            string query = "SELECT * FROM compraVenta";
+            List<CompraVenta> lista = [];
+            string query = "SELECT * FROM CompraVenta";
             try
             {
                 using SqlConnection conn = new(connectionString);
@@ -72,7 +72,7 @@ namespace Parcial1.Data
 
         public CompraVenta? ObtenerCompraVenta(string idCompraVenta)
         {
-            string query = "SELECT * FROM compraVenta WHERE idCompraVenta = @idCompraVenta";
+            string query = "SELECT * FROM CompraVenta WHERE idCompraVenta = @idCompraVenta";
             try
             {
                 using SqlConnection conn = new(connectionString);
@@ -104,7 +104,7 @@ namespace Parcial1.Data
         public string ActualizarCompraVenta(CompraVenta compraVenta)
         {
             string qry = @"
-                UPDATE compraVenta 
+                UPDATE CompraVenta 
                 SET placa = @placa, cuiComprador = @cuiComprador, cuiVendedor = @cuiVendedor, fechaTransaccion = @fechaTransaccion, perecioVenta = @perecioVenta
                 WHERE idCompraVenta = @idCompraVenta";
 
@@ -130,7 +130,7 @@ namespace Parcial1.Data
 
         public string EliminarCompraVenta(string idCompraVenta)
         {
-            string qry = "DELETE FROM compraVenta WHERE idCompraVenta = @idCompraVenta";
+            string qry = "DELETE FROM CompraVenta WHERE idCompraVenta = @idCompraVenta";
             try
             {
                 using SqlConnection conn = new(connectionString);

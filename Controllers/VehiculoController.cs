@@ -1,7 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Parcial1.Data;
-using System.Collections.Generic;
 
 namespace Parcial1.Controllers
 {

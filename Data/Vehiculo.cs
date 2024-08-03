@@ -1,6 +1,4 @@
 ﻿using Microsoft.Data.SqlClient;
-using System;
-using System.Collections.Generic;
 
 namespace Parcial1.Data
 {
@@ -40,7 +38,7 @@ namespace Parcial1.Data
 
         public List<Vehiculo> ListarVehiculos()
         {
-            List<Vehiculo> lista = new();
+            List<Vehiculo> lista = [];
             string query = "SELECT * FROM vehiculos";
             try
             {
