@@ -4,7 +4,7 @@ namespace Parcial1.Data
 {
     public class CompraVenta
     {
-        private string connectionString = "Server=svr-sql-ctezo.southcentralus.cloudapp.azure.com;Database=db_banco;User Id=usr_admin;Password=usrGuastaUMG!ng;TrustServerCertificate=True;";
+        private readonly string connectionString = "Server=svr-sql-ctezo.southcentralus.cloudapp.azure.com;Database=db_banco;User Id=usr_admin;Password=usrGuastaUMG!ng;TrustServerCertificate=True;";
 
         public string? IdCompraVenta { get; set; }
         public string? Placa { get; set; }
