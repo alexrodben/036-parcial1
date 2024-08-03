@@ -10,41 +10,39 @@ namespace Parcial1.Data
         public string? Placa { get; set; }
         public string? CuiComprador { get; set; }
         public string? CuiVendedor { get; set; }
-        public string? FechaTransaccion { get; set; }
-        public string? PerecioVenta { get; set; }
+        public DateTime? FechaTransaccion { get; set; }
+        public decimal? PerecioVenta { get; set; }
 
-        public string GuardarCompraVenta(CompraVenta CompraVenta)
+        public string GuardarCompraVenta(CompraVenta compraVenta)
         {
             string qry = @"
-                INSERT INTO compraVentra (idCompraVenta, placa, cuiComprador, cuiVendedor, fechaTransaccion, perecioVenta)
+                INSERT INTO compraVenta (idCompraVenta, placa, cuiComprador, cuiVendedor, fechaTransaccion, perecioVenta)
                 VALUES (@idCompraVenta, @placa, @cuiComprador, @cuiVendedor, @fechaTransaccion, @perecioVenta)";
 
             try
             {
-                //importante, cargar conector SQL
                 using SqlConnection conn = new(connectionString);
-                //abrir conexion
                 conn.Open();
                 using SqlCommand cmd = new(qry, conn);
-                cmd.Parameters.AddWithValue("@idCompraVenta", CompraVenta.IdCompraVenta);
-                cmd.Parameters.AddWithValue("@placa", CompraVenta.Placa);
-                cmd.Parameters.AddWithValue("@cuiComprador", CompraVenta.CuiComprador);
-                cmd.Parameters.AddWithValue("@anio", CompraVenta.CuiVendedor);
-                cmd.Parameters.AddWithValue("@fechaTransaccion", CompraVenta.FechaTransaccion);
-                // Execute the command
+                cmd.Parameters.AddWithValue("@idCompraVenta", compraVenta.IdCompraVenta);
+                cmd.Parameters.AddWithValue("@placa", compraVenta.Placa);
+                cmd.Parameters.AddWithValue("@cuiComprador", compraVenta.CuiComprador);
+                cmd.Parameters.AddWithValue("@cuiVendedor", compraVenta.CuiVendedor);
+                cmd.Parameters.AddWithValue("@fechaTransaccion", compraVenta.FechaTransaccion);
+                cmd.Parameters.AddWithValue("@perecioVenta", compraVenta.PerecioVenta);
                 cmd.ExecuteNonQuery();
-                return "";
+                return "CompraVenta guardada exitosamente.";
             }
             catch (Exception ex)
             {
-                // Handle exception
-                return (ex.Message);
+                return ex.Message;
             }
         }
-        public List<CompraVenta> ListarCompraVentas()
+
+        public List<CompraVenta> ListarcompraVenta()
         {
             List<CompraVenta> lista = new();
-            string query = "SELECT * FROM compraVentas";
+            string query = "SELECT * FROM compraVenta";
             try
             {
                 using SqlConnection conn = new(connectionString);
@@ -58,9 +56,9 @@ namespace Parcial1.Data
                         IdCompraVenta = reader["idCompraVenta"].ToString(),
                         Placa = reader["placa"].ToString(),
                         CuiComprador = reader["cuiComprador"].ToString(),
-                        CuiVendedor = reader["anio"].ToString(),
-                        FechaTransaccion = reader["fechaTransaccion"].ToString(),
-                        PerecioVenta = reader["perecioVenta"].ToString()
+                        CuiVendedor = reader["cuiVendedor"].ToString(),
+                        FechaTransaccion = reader.GetDateTime(reader.GetOrdinal("fechaTransaccion")),
+                        PerecioVenta = reader.GetDecimal(reader.GetOrdinal("perecioVenta"))
                     };
                     lista.Add(compraVenta);
                 }
@@ -72,5 +70,80 @@ namespace Parcial1.Data
             return lista;
         }
 
+        public CompraVenta? ObtenerCompraVenta(string idCompraVenta)
+        {
+            string query = "SELECT * FROM compraVenta WHERE idCompraVenta = @idCompraVenta";
+            try
+            {
+                using SqlConnection conn = new(connectionString);
+                conn.Open();
+                using SqlCommand cmd = new(query, conn);
+                cmd.Parameters.AddWithValue("@idCompraVenta", idCompraVenta);
+                using SqlDataReader reader = cmd.ExecuteReader();
+                if (reader.Read())
+                {
+                    CompraVenta compraVenta = new()
+                    {
+                        IdCompraVenta = reader["idCompraVenta"].ToString(),
+                        Placa = reader["placa"].ToString(),
+                        CuiComprador = reader["cuiComprador"].ToString(),
+                        CuiVendedor = reader["cuiVendedor"].ToString(),
+                        FechaTransaccion = reader.GetDateTime(reader.GetOrdinal("fechaTransaccion")),
+                        PerecioVenta = reader.GetDecimal(reader.GetOrdinal("perecioVenta"))
+                    };
+                    return compraVenta;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return null;
+        }
+
+        public string ActualizarCompraVenta(CompraVenta compraVenta)
+        {
+            string qry = @"
+                UPDATE compraVenta 
+                SET placa = @placa, cuiComprador = @cuiComprador, cuiVendedor = @cuiVendedor, fechaTransaccion = @fechaTransaccion, perecioVenta = @perecioVenta
+                WHERE idCompraVenta = @idCompraVenta";
+
+            try
+            {
+                using SqlConnection conn = new(connectionString);
+                conn.Open();
+                using SqlCommand cmd = new(qry, conn);
+                cmd.Parameters.AddWithValue("@idCompraVenta", compraVenta.IdCompraVenta);
+                cmd.Parameters.AddWithValue("@placa", compraVenta.Placa);
+                cmd.Parameters.AddWithValue("@cuiComprador", compraVenta.CuiComprador);
+                cmd.Parameters.AddWithValue("@cuiVendedor", compraVenta.CuiVendedor);
+                cmd.Parameters.AddWithValue("@fechaTransaccion", compraVenta.FechaTransaccion);
+                cmd.Parameters.AddWithValue("@perecioVenta", compraVenta.PerecioVenta);
+                cmd.ExecuteNonQuery();
+                return "CompraVenta actualizada exitosamente.";
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
+
+        public string EliminarCompraVenta(string idCompraVenta)
+        {
+            string qry = "DELETE FROM compraVenta WHERE idCompraVenta = @idCompraVenta";
+            try
+            {
+                using SqlConnection conn = new(connectionString);
+                conn.Open();
+                using SqlCommand cmd = new(qry, conn);
+                cmd.Parameters.AddWithValue("@idCompraVenta", idCompraVenta);
+                cmd.ExecuteNonQuery();
+                return "CompraVenta eliminada exitosamente.";
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
     }
 }
